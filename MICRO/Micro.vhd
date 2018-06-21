@@ -46,7 +46,7 @@ Box_ROM: ENTITY work.ROM PORT MAP (address => regPC,
 
 
 Box_RAM: ENTITY work.RAM PORT MAP (RAM_ADDR => temp_RAM_ADDR,
-											  RAM_DATA_IN => temp_RAM_DATIN,
+											  RAM_DATA_IN => temp_R,
 											  RAM_DATA_OUT => temp_RAM_DATOUT,
 											  RAM_WR => temp_RAM_WR,
 											  RAM_CLOCK => temp_RAM_CLK
@@ -69,27 +69,36 @@ PROCESS (state, IR, regPC, PC, regdata, RST)
 				next_state <= state2;
 			WHEN state2 =>
 				--temp_B <= IR (7 downto 0);
-				--temp_S <= IR (11 downto 8);
+				temp_S <= IR (11 downto 8);
 				IF IR (13 downto 12)= "11" THEN
 				temp_B <=  IR (7 downto 0);
 				ELSIF IR (13 downto 12)= "00" THEN
-				temp_RAM_DATIN <= IR (7 downto 0);
-				temp_B <= temp_RAM_DATIN;
+				temp_RAM_ADDR <= IR (6 downto 0);
+				temp_B <= temp_RAM_DATOUT;
 				END IF;
 				temp_W <= W;
 				PC <= regPC + "0001";
 				next_state <= state3;
 			WHEN state3 =>
-			   IF IR(7)= '0' THEN
-				W <= temp_R;
-				ELSIF IR(7)= '0' THEN
-				Temp_RAM_DATIN <= IR (7 downto 0);
-				temp_RAM_DATIN <= temp_R;
-				END IF;
-				C <= temp_C;
+			   CASE IR (13 downto 12) IS
+				WHEN "11" => W <= temp_R;
+								 temp_RAM_WR <= '1'; 
+				WHEN "00" => 				 
+				    IF IR(7)= '0' THEN
+				    W <= temp_R;
+					 temp_RAM_WR <= '1';
+				    ELSE 
+				    temp_RAM_WR <= '0';
+				--temp_RAM_DATIN <= temp_R;
+				    END IF;
+			   WHEN OTHERS =>
+				     temp_RAM_WR <= '1';
+				END CASE;
+		   
+			   C <= temp_C;
 				next_state <= state1;
-		END CASE;
-		END IF;
+	END CASE;
+ END IF;
 END PROCESS dpe;
 ds:
 PROCESS(state)

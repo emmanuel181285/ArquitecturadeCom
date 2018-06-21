@@ -25,7 +25,7 @@ begin
 process(RAM_CLOCK)
 			begin
 				if(rising_edge(RAM_CLOCK)) then
-				if(RAM_WR='1') then 
+				if(RAM_WR='0') then 
             RAM(to_integer(unsigned(RAM_ADDR))) <= RAM_DATA_IN;
 
 			end if;
