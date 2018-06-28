@@ -10,87 +10,91 @@ PORT (W_LED : OUT STD_LOGIC_VECTOR (7 downto 0);
 		PC_LED : OUT STD_LOGIC_VECTOR (3 downto 0);
 		CLK : IN STD_LOGIC;
 		RST : IN STD_LOGIC;
+		Cin_LED : OUT STD_LOGIC;
 		HEX0 : OUT STD_LOGIC_VECTOR (6 downto 0)
 	   );
 END ENTITY;
 
 ARCHITECTURE A_Micro OF Micro IS
-	TYPE state_type IS (state1, state2, state3);
+	TYPE State_Type IS (State1, State2, State3);
 		
-		SIGNAL state : state_type := state1;
-		SIGNAL next_state : state_type;
+		SIGNAL State : State_Type := State1;
+		SIGNAL Next_State : State_Type;
+	
 		SIGNAL PC : STD_LOGIC_VECTOR (3 downto 0) := "0000";
-		SIGNAL IR, regdata : STD_LOGIC_VECTOR (13 downto 0);
-		SIGNAL temp_S, regPC: STD_LOGIC_VECTOR (3 downto 0);
-		SIGNAL Zout, C, temp_C, temp_Ci : STD_LOGIC;
-		SIGNAL temp_B, temp_W, temp_R, W: STD_LOGIC_VECTOR (7 downto 0);
-		SIGNAL temp_RAM_ADDR: STD_LOGIC_VECTOR (6 downto 0);
-		SIGNAL temp_RAM_DATIN, temp_RAM_DATOUT : STD_LOGIC_VECTOR (7 downto 0);
-		SIGNAL temp_RAM_WR, temp_RAM_CLK: STD_LOGIC;
-		
+		SIGNAL Address : STD_LOGIC_VECTOR (6 downto 0);
+		SIGNAL IR, Reg_Data : STD_LOGIC_VECTOR (13 downto 0);
+		SIGNAL Temp_S, Reg_PC: STD_LOGIC_VECTOR (3 downto 0);
+		SIGNAL Zout, C, Temp_C, Temp_Ci, W_E : STD_LOGIC := '0';
+		SIGNAL Temp_B, Temp_W, Temp_R, Data_In, Data_Out, W: STD_LOGIC_VECTOR (7 downto 0):= "00000000";
 		
 Begin
 
-Box_ALU : ENTITY work.ALU PORT MAP (A => temp_W, 
-												B => temp_B, 
-												OP => temp_S, 
-												R => temp_R, 
+Box_ALU : ENTITY work.ALU PORT MAP (A => Temp_W, 
+												B => Temp_B, 
+												OP => Temp_S, 
+												R => Temp_R, 
 												Zo => Zout,
-												Co => temp_C, 
-												Ci => temp_Ci);
+												Co => Temp_C, 
+												Ci => Temp_Ci);
 												
-Box_ROM: ENTITY work.ROM PORT MAP (address => regPC,
-											 data => regdata);
-											 
-
-
-
-Box_RAM: ENTITY work.RAM PORT MAP (RAM_ADDR => temp_RAM_ADDR,
-											  RAM_DATA_IN => temp_RAM_DATIN,
-											  RAM_DATA_OUT => temp_RAM_DATOUT,
-											  RAM_WR => temp_RAM_WR,
-											  RAM_CLOCK => temp_RAM_CLK
-											  );											 
-											 
-											 
-
-											 
+Box_ROM: ENTITY work.mem PORT MAP (address => Reg_PC,
+											  data => Reg_Data);
+											  
+Box_RAM: ENTITY work.RAM PORT MAP (WE => W_E,
+											  datain => temp_R,
+											  dataout => Data_Out,
+											  addr => Address,
+											  clk => CLK);
 dpe:
-PROCESS (state, IR, regPC, PC, regdata, RST)
+PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 	BEGIN
 		IF RST = '0' THEN
 			W <= "00000000";
 			PC <= "0000";
-		ELSE
-		CASE state IS
-			WHEN state1 =>
-				regPC <= PC;
-				IR <= regdata;
-				next_state <= state2;
-			WHEN state2 =>
-				--temp_B <= IR (7 downto 0);
-				--temp_S <= IR (11 downto 8);
-				IF IR (13 downto 12)= "11" THEN
-				temp_B <=  IR (7 downto 0);
-				ELSIF IR (13 downto 12)= "00" THEN
-				temp_RAM_DATIN <= IR (7 downto 0);
-				temp_B <= temp_RAM_DATIN;
+		ELSE 
+		
+		CASE State IS
+			WHEN State1 =>
+				Reg_PC <= PC;
+				IR <= Reg_Data;
+				W_E <= '1';			
+				Next_State <= State2;
+			WHEN State2 =>
+				IF (IR(13 downto 12) = "11") THEN
+					Temp_B <= IR (7 downto 0);
+				ELSIF (IR(13 downto 12) = "00") THEN	
+					Temp_B <= Data_Out;
+			   ELSE
+					temp_B <= "00000000";
 				END IF;
-				temp_W <= W;
-				PC <= regPC + "0001";
-				next_state <= state3;
-			WHEN state3 =>
-			   IF IR(7)= '0' THEN
-				W <= temp_R;
-				ELSIF IR(7)= '0' THEN
-				Temp_RAM_DATIN <= IR (7 downto 0);
-				temp_RAM_DATIN <= temp_R;
+				W_E <= '1';
+				PC <= Reg_PC + "0001";
+				Temp_W <= W;
+				Temp_S <= IR (11 downto 8);
+				Next_State <= State3;
+			WHEN State3 =>
+				IF (IR (13 downto 12) = "11") THEN
+					W <= Temp_R;
+					W_E <= '1';
+				ELSIF (IR (13 downto 12) = "00") THEN
+					IF IR(7) = '0' THEN
+						W <= temp_R;
+						W_E <= '1';
+					ELSE
+						W_E <= '0';
+					END IF;
+				ELSE 
+					W_E <= '1';
 				END IF;
-				C <= temp_C;
-				next_state <= state1;
+				Next_State <= State1;
 		END CASE;
 		END IF;
-END PROCESS dpe;
+END PROCESS;
+      
+PC_LED <= Reg_PC;
+W_LED <= W;
+
 ds:
 PROCESS(state)
   BEGIN
@@ -101,13 +105,9 @@ PROCESS(state)
 			   HEX0 <= "0100100";
 			WHEN state3 =>
 				HEX0 <= "0110000";
+				Z_OUT <= Zout;
 		END CASE;
 END PROCESS;
-      
-PC_LED <= regPC;
-W_LED <= W;
-C_OUT <= C;
-Z_OUT <= Zout;
 
 ff:
 PROCESS (CLK, RST, next_state)
@@ -121,5 +121,3 @@ END PROCESS ff;
 
 
 END ARCHITECTURE;
- 
- 

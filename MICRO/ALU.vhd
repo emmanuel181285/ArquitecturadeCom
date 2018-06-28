@@ -76,7 +76,7 @@ BEGIN
 					R1 <= SR (7 downto 0);
 					Co <= SR(8);
 				ELSIF (OP = "1101") THEN
-					SR <= ('0' & A) - ('0' & B) - ("0000000" & Ci);
+					SR <= ('0' & A) - ('0' & B)-("0000000" & Ci);
 					R1 <= SR (7 downto 0);
 					Co <= SR(8);	
 				ELSIF (OP = "1110") THEN

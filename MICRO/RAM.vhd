@@ -1,36 +1,32 @@
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-USE ieee.numeric_std.ALL;
+use IEEE.STD_LOGIC_1164.all;
+use IEEE.Numeric_Std.all;
+use ieee.std_logic_unsigned.all;
 
+ENTITY RAM IS
+  PORT (
+    WE, CLK : IN  STD_LOGIC;
+	 addr : IN STD_LOGIC_VECTOR (6 downto 0);
+	 datain : IN STD_LOGIC_VECTOR (7 downto 0);
+	 dataout : OUT STD_LOGIC_VECTOR (7 downto 0)
+	 );
+END ENTITY;
 
-entity RAM is
-port(
- 
- RAM_ADDR: in std_logic_vector(6 downto 0); 
- RAM_DATA_IN: in std_logic_vector(7 downto 0);
- RAM_WR: in std_logic; 
- RAM_CLOCK: in std_logic; 
- RAM_DATA_OUT: out std_logic_vector(7 downto 0) 
-);
-end RAM;
+ARCHITECTURE M_RAM OF RAM IS
 
-architecture A_RAM of RAM is
+	TYPE RAM_ARRAY IS ARRAY (0 to 15) OF STD_LOGIC_VECTOR (7 downto 0);
+	SIGNAL RAM : RAM_ARRAY;
 
-type RAM_ARRAY is array (0 to 127 ) of std_logic_vector (7 downto 0);
+BEGIN
+PROCESS (CLK)
 
-signal RAM : RAM_ARRAY;
-
-  
-begin
-process(RAM_CLOCK)
-			begin
-				if(rising_edge(RAM_CLOCK)) then
-				if(RAM_WR='1') then 
-            RAM(to_integer(unsigned(RAM_ADDR))) <= RAM_DATA_IN;
-
-			end if;
-		end if;
-end process;
- 
- RAM_DATA_OUT <= RAM(to_integer(unsigned(RAM_ADDR)));
-end A_RAM;
+	BEGIN 
+		IF (rising_edge(CLK)) THEN
+			IF (WE = '1') THEN
+				dataout <= ram (conv_integer(addr));
+			ELSIF (WE = '0') THEN
+				RAM(conv_integer(addr)) <= datain;
+			END IF;
+		END IF;
+END PROCESS;
+END ARCHITECTURE;
