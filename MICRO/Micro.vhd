@@ -16,7 +16,7 @@ END ENTITY;
 
 ARCHITECTURE A_Micro OF Micro IS
 	TYPE state_type IS (state1, state2, state3);
-		
+		--holi
 		SIGNAL state : state_type := state1;
 		SIGNAL next_state : state_type;
 		SIGNAL PC : STD_LOGIC_VECTOR (3 downto 0) := "0000";
