@@ -52,12 +52,14 @@ PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 		IF RST = '0' THEN
 			W <= "00000000";
 			PC <= "0000";
+			C_OUT <= '0';
 		ELSE 
 		
 		CASE State IS
 			WHEN State1 =>
 				Reg_PC <= PC;
 				IR <= Reg_Data;
+				temp_Ci <= temp_C;
 				W_E <= '1';			
 				Next_State <= State2;
 			WHEN State2 =>
@@ -68,10 +70,9 @@ PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 			   ELSE
 					temp_B <= "00000000";
 				END IF;
-				W_E <= '1';
-				PC <= Reg_PC + "0001";
 				Temp_W <= W;
 				Temp_S <= IR (11 downto 8);
+				W_E <= '1';
 				Next_State <= State3;
 			WHEN State3 =>
 				IF (IR (13 downto 12) = "11") THEN
@@ -87,6 +88,9 @@ PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 				ELSE 
 					W_E <= '1';
 				END IF;
+				PC <= Reg_PC + "0001";
+				C <= temp_C;
+				C_OUT <= C;
 				Next_State <= State1;
 		END CASE;
 		END IF;
