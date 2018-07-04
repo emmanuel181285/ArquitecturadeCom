@@ -10,13 +10,13 @@ PORT (W_LED : OUT STD_LOGIC_VECTOR (7 downto 0);
 		PC_LED : OUT STD_LOGIC_VECTOR (3 downto 0);
 		CLK : IN STD_LOGIC;
 		RST : IN STD_LOGIC;
-		HEX0 : OUT STD_LOGIC_VECTOR (6 downto 0)
+		HEX0, HEX1, HEX2, HEX3 : OUT STD_LOGIC_VECTOR (6 downto 0)
 	   );
 END ENTITY;
 
 ARCHITECTURE A_Micro OF Micro IS
 	TYPE state_type IS (state1, state2, state3);
-		--holi
+		
 		SIGNAL state : state_type := state1;
 		SIGNAL next_state : state_type;
 		SIGNAL PC : STD_LOGIC_VECTOR (3 downto 0) := "0000";
@@ -65,43 +65,42 @@ PROCESS (state, IR, regPC, PC, regdata, RST)
 		ELSE
 		CASE state IS
 			WHEN state1 =>
-				regPC <= PC;
-				IR <= regdata;
-				--temp_RAM_WR <= '1';
+				  regPC <= PC;
+				  IR <= regdata;
+				  --temp_RAM_WR <= '1';
 				next_state <= state2;
 			WHEN state2 =>
-				--temp_B <= IR (7 downto 0);
-				temp_S <= IR (11 downto 8);
-				IF IR (13 downto 12)= "11" THEN
-				temp_B <=  IR (7 downto 0);
-				ELSIF IR (13 downto 12)= "00" THEN
-				--temp_RAM_ADDR <= IR (6 downto 0);
-				temp_B <= temp_RAM_DATOUT;
-				ELSE
-				--temp_B <= "00000000";
-				END IF;
-				--temp_RAM_WR <= '1';
-				temp_W <= W;
-				PC <= regPC + "0001";
-				next_state <= state3;
-			WHEN state3 =>
-			   CASE IR (13 downto 12) IS
-				WHEN "11" => W <= temp_R;
-								 temp_RAM_WR <= '1'; 
-				WHEN "00" => 				 
-				    IF IR(7)= '0' THEN
-				    W <= temp_R;
-					 --temp_RAM_WR <= '1';
-				    ELSE 
-				    temp_RAM_WR <= '0';
-				    --temp_RAM_DATIN <= temp_R;
+				  temp_S <= IR (11 downto 8);
+				  IF IR (13 downto 12)= "11" THEN
+				  temp_B <=  IR (7 downto 0);
+				  ELSIF IR (13 downto 12)= "00" THEN
+				  --temp_RAM_ADDR <= IR (6 downto 0);
+				  temp_B <= temp_RAM_DATOUT;
+				  ELSE
+				  --temp_B <= "00000000";
+				  END IF;
+				  --temp_RAM_WR <= '1';
+				  temp_W <= W;
+				  PC <= regPC + "0001";
+				  next_state <= state3;
+			 WHEN state3 =>
+			    CASE IR (13 downto 12) IS
+				  WHEN "11" => W <= temp_R;
+							      temp_RAM_WR <= '1'; 
+				  WHEN "00" => 				 
+				     IF IR(7)= '0' THEN
+				               W<= temp_R;
+					            --temp_RAM_WR <= '1';
+				     ELSE 
+				        temp_RAM_WR <= '0';
+				        --temp_RAM_DATIN <= temp_R;
 				    END IF;
-			   WHEN OTHERS =>
+			     WHEN OTHERS =>
 				    --temp_RAM_WR <= '1';
-				END CASE;
+				 END CASE;
 		   
-			   C <= temp_C;
-				next_state <= state1;
+			  C <= temp_C;
+		  next_state <= state1;
 	END CASE;
  END IF;
 END PROCESS dpe;
@@ -111,10 +110,19 @@ PROCESS(state)
 		CASE state IS
 			WHEN state1 =>
 				HEX0 <= "1111001";
+				HEX1 <= "1111111";
+				HEX2 <= "1111111";
+				HEX3 <= "1111111";
 			WHEN state2 =>
 			   HEX0 <= "0100100";
+				HEX1 <= "1111111";
+				HEX2 <= "1111111";
+				HEX3 <= "1111111";
 			WHEN state3 =>
 				HEX0 <= "0110000";
+				HEX1 <= "1111111";
+				HEX2 <= "1111111";
+				HEX3 <= "1111111";
 		END CASE;
 END PROCESS;
       
