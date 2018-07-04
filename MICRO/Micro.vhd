@@ -52,7 +52,7 @@ PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 		IF RST = '0' THEN
 			W <= "00000000";
 			PC <= "0000";
-			C_OUT <= '0';
+			
 		ELSE 
 		
 		CASE State IS
@@ -90,7 +90,6 @@ PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 				END IF;
 				PC <= Reg_PC + "0001";
 				C <= temp_C;
-				C_OUT <= C;
 				Next_State <= State1;
 		END CASE;
 		END IF;
@@ -98,7 +97,8 @@ END PROCESS;
       
 PC_LED <= Reg_PC;
 W_LED <= W;
-
+C_OUT <= C;
+Z_OUT <= Zout;
 ds:
 PROCESS(state)
   BEGIN
@@ -109,7 +109,7 @@ PROCESS(state)
 			   HEX0 <= "0100100";
 			WHEN state3 =>
 				HEX0 <= "0110000";
-				Z_OUT <= Zout;
+			
 		END CASE;
 END PROCESS;
 

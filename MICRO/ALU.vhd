@@ -6,13 +6,13 @@ use ieee.std_logic_arith.all;
 
 
 ENTITY ALU IS
-PORT ( Ci : IN STD_LOGIC;
+PORT ( Ci : IN STD_LOGIC := '0';
 		 A : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
 		 B : IN STD_LOGIC_VECTOR (7 DOWNTO 0);
 		 OP : IN STD_LOGIC_VECTOR (3 DOWNTO 0);
 		 R : OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
-		 Zo : OUT STD_LOGIC;
-		 Co: OUT STD_LOGIC
+		 Zo : OUT STD_LOGIC := '0';
+		 Co: OUT STD_LOGIC := '0'
 		 );		 
 END ENTITY ALU;
 
@@ -76,7 +76,7 @@ BEGIN
 					R1 <= SR (7 downto 0);
 					Co <= SR(8);
 				ELSIF (OP = "1101") THEN
-					SR <= ('0' & A) - ('0' & B)-("0000000" & Ci);
+					SR <= ('0' & A) - ('0' & B);
 					R1 <= SR (7 downto 0);
 					Co <= SR(8);	
 				ELSIF (OP = "1110") THEN
