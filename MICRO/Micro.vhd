@@ -67,7 +67,7 @@ PROCESS (state, IR, regPC, PC, regdata, RST)
 			WHEN state1 =>
 				regPC <= PC;
 				IR <= regdata;
-				temp_RAM_WR <= '1';
+				--temp_RAM_WR <= '1';
 				next_state <= state2;
 			WHEN state2 =>
 				--temp_B <= IR (7 downto 0);
@@ -78,9 +78,9 @@ PROCESS (state, IR, regPC, PC, regdata, RST)
 				--temp_RAM_ADDR <= IR (6 downto 0);
 				temp_B <= temp_RAM_DATOUT;
 				ELSE
-				temp_B <= "00000000";
+				--temp_B <= "00000000";
 				END IF;
-				temp_RAM_WR <= '1';
+				--temp_RAM_WR <= '1';
 				temp_W <= W;
 				PC <= regPC + "0001";
 				next_state <= state3;
@@ -91,13 +91,13 @@ PROCESS (state, IR, regPC, PC, regdata, RST)
 				WHEN "00" => 				 
 				    IF IR(7)= '0' THEN
 				    W <= temp_R;
-					 temp_RAM_WR <= '1';
+					 --temp_RAM_WR <= '1';
 				    ELSE 
 				    temp_RAM_WR <= '0';
-				--temp_RAM_DATIN <= temp_R;
+				    --temp_RAM_DATIN <= temp_R;
 				    END IF;
 			   WHEN OTHERS =>
-				     temp_RAM_WR <= '1';
+				    --temp_RAM_WR <= '1';
 				END CASE;
 		   
 			   C <= temp_C;
