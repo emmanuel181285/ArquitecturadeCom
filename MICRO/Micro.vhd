@@ -61,11 +61,13 @@ PROCESS (state, IR, regPC, PC, regdata, RST)
 		IF RST = '0' THEN
 			W <= "00000000";
 			PC <= "0000";
+			
 		ELSE
 		CASE state IS
 			WHEN state1 =>
 				regPC <= PC;
 				IR <= regdata;
+				temp_RAM_WR <= '1';
 				next_state <= state2;
 			WHEN state2 =>
 				--temp_B <= IR (7 downto 0);
@@ -73,9 +75,12 @@ PROCESS (state, IR, regPC, PC, regdata, RST)
 				IF IR (13 downto 12)= "11" THEN
 				temp_B <=  IR (7 downto 0);
 				ELSIF IR (13 downto 12)= "00" THEN
-				temp_RAM_ADDR <= IR (6 downto 0);
+				--temp_RAM_ADDR <= IR (6 downto 0);
 				temp_B <= temp_RAM_DATOUT;
+				ELSE
+				temp_B <= "00000000";
 				END IF;
+				temp_RAM_WR <= '1';
 				temp_W <= W;
 				PC <= regPC + "0001";
 				next_state <= state3;

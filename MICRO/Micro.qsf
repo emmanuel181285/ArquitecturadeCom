@@ -55,4 +55,28 @@ set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_RO
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name VHDL_FILE ALU.vhd
 set_global_assignment -name VHDL_FILE RAM.vhd
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVTTL"
+set_location_assignment PIN_R22 -to CLK
+set_location_assignment PIN_E2 -to HEX0[6]
+set_location_assignment PIN_F1 -to HEX0[5]
+set_location_assignment PIN_F2 -to HEX0[4]
+set_location_assignment PIN_H1 -to HEX0[3]
+set_location_assignment PIN_H2 -to HEX0[2]
+set_location_assignment PIN_J1 -to HEX0[1]
+set_location_assignment PIN_J2 -to HEX0[0]
+set_location_assignment PIN_V21 -to PC_LED[3]
+set_location_assignment PIN_V22 -to PC_LED[2]
+set_location_assignment PIN_U21 -to PC_LED[1]
+set_location_assignment PIN_U22 -to PC_LED[0]
+set_location_assignment PIN_R21 -to RST
+set_location_assignment PIN_U18 -to W_LED[7]
+set_location_assignment PIN_Y18 -to W_LED[6]
+set_location_assignment PIN_V19 -to W_LED[5]
+set_location_assignment PIN_T18 -to W_LED[4]
+set_location_assignment PIN_Y19 -to W_LED[3]
+set_location_assignment PIN_U19 -to W_LED[2]
+set_location_assignment PIN_R19 -to W_LED[1]
+set_location_assignment PIN_R20 -to W_LED[0]
+set_location_assignment PIN_R17 -to Z_OUT
+set_location_assignment PIN_R18 -to C_OUT
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
