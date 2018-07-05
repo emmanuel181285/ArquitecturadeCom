@@ -11,7 +11,7 @@ PORT (W_LED : OUT STD_LOGIC_VECTOR (7 downto 0);
 		CLK : IN STD_LOGIC;
 		RST : IN STD_LOGIC;
 		Cin_LED : OUT STD_LOGIC;
-		HEX0 : OUT STD_LOGIC_VECTOR (6 downto 0)
+		HEX0, HEX1, HEX2, HEX3 : OUT STD_LOGIC_VECTOR (6 downto 0)
 	   );
 END ENTITY;
 
@@ -105,10 +105,19 @@ PROCESS(state)
 		CASE state IS
 			WHEN state1 =>
 				HEX0 <= "1111001";
+				HEX1 <= "1111111";
+				HEX2 <= "1111111";
+				HEX3 <= "1111111";
 			WHEN state2 =>
 			   HEX0 <= "0100100";
+				HEX1 <= "1111111";
+				HEX2 <= "1111111";
+				HEX3 <= "1111111";
 			WHEN state3 =>
 				HEX0 <= "0110000";
+				HEX1 <= "1111111";
+				HEX2 <= "1111111";
+				HEX3 <= "1111111";
 			
 		END CASE;
 END PROCESS;
