@@ -21,7 +21,7 @@ BEGIN
 				WHEN "0011" => data <= "11011000000011"; --XORLW
 				WHEN "0100" => data <= "11010011111111"; --ANDLW
 				WHEN "0101" => data <= "11110001100100"; --ADDLW
-				WHEN "0110" => data <= "11110100101000"; --SUBLW
+				WHEN "0110" => data <= "11110100010100"; --SUBLW
 				WHEN "0111" => data <= "11110001100100"; --ADDLW
 				WHEN "1000" => data <= "11010100001100"; --IORLW
 				WHEN "1001" => data <= "11010000000000"; --ANDLW
