@@ -52,7 +52,7 @@ PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 		IF RST = '0' THEN
 			W <= "00000000";
 			PC <= "0000";
-			
+			Next_State <= State1;
 		ELSE 
 		
 		CASE State IS
