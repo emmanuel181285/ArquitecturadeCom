@@ -18,7 +18,7 @@ BEGIN
 			   WHEN "0000" => data <= "11100100010100"; --MOVLW
 				WHEN "0001" => data <= "00100010000101"; --MOVWF
 				WHEN "0010" => data <= "11100100000000"; --MOVLW
-				WHEN "0011" => data <= "00100100000101"; --MOVWF
+				WHEN "0011" => data <= "00100110000101"; --MOVWF
 				
 				
 				

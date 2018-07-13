@@ -71,7 +71,7 @@ PROCESS (state, IR, regPC, PC, regdata, RST)
 				  next_state <= state2;
 				  
 			WHEN state2 =>
-			     temp_RAM_WR <= '1';
+			     
 				  temp_S <= IR (11 downto 8);
 				  IF IR (13 downto 12)= "11" THEN
 				  temp_B <=  IR (7 downto 0);
