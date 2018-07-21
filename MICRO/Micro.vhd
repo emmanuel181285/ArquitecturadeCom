@@ -19,6 +19,7 @@ ARCHITECTURE A_Micro OF Micro IS
 		
 		SIGNAL state : state_type := state1;
 		SIGNAL next_state : state_type;
+		
 		SIGNAL PC : STD_LOGIC_VECTOR (3 downto 0) := "0000";
 		SIGNAL IR, regdata : STD_LOGIC_VECTOR (13 downto 0);
 		SIGNAL temp_S, regPC: STD_LOGIC_VECTOR (3 downto 0);
@@ -26,7 +27,7 @@ ARCHITECTURE A_Micro OF Micro IS
 		SIGNAL temp_B, temp_W, temp_R, W: STD_LOGIC_VECTOR (7 downto 0);
 		SIGNAL temp_RAM_ADDR: STD_LOGIC_VECTOR (6 downto 0);
 		SIGNAL temp_RAM_DATIN, temp_RAM_DATOUT : STD_LOGIC_VECTOR (7 downto 0);
-		SIGNAL temp_RAM_WR, temp_RAM_CLK: STD_LOGIC;
+		SIGNAL temp_RAM_WR : STD_LOGIC;
 		
 		
 Begin
@@ -45,18 +46,19 @@ Box_ROM: ENTITY work.ROM PORT MAP (address => regPC,
 
 
 
-Box_RAM: ENTITY work.RAM PORT MAP (RAM_ADDR => temp_RAM_ADDR,
+Box_RAM: ENTITY work.RAM PORT MAP (RAM_WR => temp_RAM_WR,
 											  RAM_DATA_IN => temp_R,
 											  RAM_DATA_OUT => temp_RAM_DATOUT,
-											  RAM_WR => temp_RAM_WR,
-											  RAM_CLOCK => temp_RAM_CLK
+											  RAM_ADDR => temp_RAM_ADDR,
+											  --RAM_CLOCK => temp_RAM_CLK
+											  CLK => CLK
 											  );											 
 											 
 											 
 
 											 
 dpe:
-PROCESS (state, IR, regPC, PC, regdata, RST)
+PROCESS (state, IR,C, regPC,W,Temp_R, Temp_C, PC, regdata, RST)
 	BEGIN
 		IF RST = '0' THEN
 			W <= "00000000";
@@ -67,23 +69,24 @@ PROCESS (state, IR, regPC, PC, regdata, RST)
 			WHEN state1 =>
 				  regPC <= PC;
 				  IR <= regdata;
+				  temp_Ci <= temp_C;
 				  temp_RAM_WR <= '1';
 				  next_state <= state2;
 				  
-			WHEN state2 =>
-			     
-				  temp_S <= IR (11 downto 8);
-				  IF IR (13 downto 12)= "11" THEN
+			WHEN state2 =>     
+				  IF (IR(13 downto 12)= "11") THEN
 				  temp_B <=  IR (7 downto 0);
-				  ELSIF IR (13 downto 12)= "00" THEN
+				  ELSIF (IR (13 downto 12)= "00") THEN
 				  temp_B <= temp_RAM_DATOUT;				  	  
 				  ELSE
 				  temp_B <= "00000000";
 				  END IF;
 				  temp_W <= W;
+				  temp_S <= IR (11 downto 8);
 				  temp_RAM_WR <= '1';  
 				  next_state <= state3;
 			 WHEN state3 =>
+			 
 			    CASE IR (13 downto 12) IS
 				  WHEN "11" => 
 				               W <= temp_R;
@@ -105,6 +108,14 @@ PROCESS (state, IR, regPC, PC, regdata, RST)
 	END CASE;
  END IF;
 END PROCESS dpe;
+
+
+PC_LED <= regPC;
+W_LED <= W;
+C_OUT <= C;
+Z_OUT <= Zout;
+
+
 ds:
 PROCESS(state)
   BEGIN
@@ -127,10 +138,7 @@ PROCESS(state)
 		END CASE;
 END PROCESS;
       
-PC_LED <= regPC;
-W_LED <= W;
-C_OUT <= C;
-Z_OUT <= Zout;
+
 
 ff:
 PROCESS (CLK, RST, next_state)
