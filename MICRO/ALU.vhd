@@ -81,7 +81,7 @@ BEGIN
 					Co <= SR(8);	
 				ELSIF (OP = "1110") THEN
 					R1 <= "11111111";
-				ELSIF (OP = "1111") THEN
+				ELSE
 					R1 <= "11111111";
 				END IF;
 				IF (R1 = "00000000") THEN
