@@ -22,12 +22,11 @@ ARCHITECTURE A_Micro OF Micro IS
 		SIGNAL Next_State : State_Type;
 	
 		SIGNAL PC : STD_LOGIC_VECTOR (3 downto 0) := "0000";
-		SIGNAL Address : STD_LOGIC_VECTOR (6 downto 0);
 		SIGNAL IR, Reg_Data : STD_LOGIC_VECTOR (13 downto 0);
 		SIGNAL Temp_S, Reg_PC: STD_LOGIC_VECTOR (3 downto 0);
 		SIGNAL Zout, C, Temp_C, Temp_Ci, W_E : STD_LOGIC := '0';
 		SIGNAL Temp_B, Temp_W, Temp_R, Data_In, Data_Out, W: STD_LOGIC_VECTOR (7 downto 0):= "00000000";
-		
+		SIGNAL Address : STD_LOGIC_VECTOR (6 downto 0);
 Begin
 
 Box_ALU : ENTITY work.ALU PORT MAP (A => Temp_W, 
@@ -44,8 +43,10 @@ Box_ROM: ENTITY work.mem PORT MAP (address => Reg_PC,
 Box_RAM: ENTITY work.RAM PORT MAP (WE => W_E,
 											  datain => temp_R,
 											  dataout => Data_Out,
+											  --data => temp_R,
+											  --q => Data_Out,
 											  addr => Address,
-											  clk => CLK);
+											  CLK => CLK);
 dpe:
 PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 	BEGIN
@@ -59,9 +60,10 @@ PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 			WHEN State1 =>
 				Reg_PC <= PC;
 				IR <= Reg_Data;
-				temp_Ci <= temp_C;
+				--temp_Ci <= temp_C;
 				W_E <= '1';			
 				Next_State <= State2;
+				
 			WHEN State2 =>
 				IF (IR(13 downto 12) = "11") THEN
 					Temp_B <= IR (7 downto 0);
@@ -74,6 +76,7 @@ PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 				Temp_S <= IR (11 downto 8);
 				W_E <= '1';
 				Next_State <= State3;
+				
 			WHEN State3 =>
 				IF (IR (13 downto 12) = "11") THEN
 					W <= Temp_R;
@@ -89,8 +92,9 @@ PROCESS (state, IR,C, Reg_PC, W, Temp_R, Temp_C, PC, Reg_Data, RST)
 					W_E <= '1';
 				END IF;
 				PC <= Reg_PC + "0001";
-				C <= temp_C;
+				--C <= temp_C;
 				Next_State <= State1;
+				
 		END CASE;
 		END IF;
 END PROCESS;

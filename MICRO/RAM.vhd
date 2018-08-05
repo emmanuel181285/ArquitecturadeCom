@@ -5,18 +5,18 @@ use ieee.std_logic_unsigned.all;
 
 ENTITY RAM IS
   PORT (
-    WE, CLK : IN  STD_LOGIC;
-	 addr : IN STD_LOGIC_VECTOR (6 downto 0);
-	 datain : IN STD_LOGIC_VECTOR (7 downto 0);
-	 dataout : OUT STD_LOGIC_VECTOR (7 downto 0)
-	 );
+			WE, CLK : IN  STD_LOGIC;
+			addr : IN STD_LOGIC_VECTOR (6 downto 0);
+			datain : IN STD_LOGIC_VECTOR (7 downto 0);
+			dataout : OUT STD_LOGIC_VECTOR (7 downto 0));
+		  
 END ENTITY;
 
 ARCHITECTURE M_RAM OF RAM IS
 
-	TYPE RAM_ARRAY IS ARRAY (0 to 127) OF STD_LOGIC_VECTOR (7 downto 0);
+	TYPE RAM_ARRAY IS ARRAY (128 downto 0) OF STD_LOGIC_VECTOR (7 downto 0);
 	SIGNAL RAM : RAM_ARRAY;
-
+	
 BEGIN
 PROCESS (CLK)
 
@@ -27,7 +27,7 @@ PROCESS (CLK)
 			ELSIF (WE = '0') THEN
 				RAM(conv_integer(addr)) <= datain;
 			END IF;
+	
 		END IF;
-END PROCESS;
-
+END PROCESS;	
 END ARCHITECTURE;
