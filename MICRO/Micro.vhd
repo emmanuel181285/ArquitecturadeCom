@@ -95,6 +95,8 @@ PROCESS (state, IR,C, regPC,W,Temp_R, Temp_C, PC, regdata, RST)
 				     IF IR(7)= '0' THEN
 				               W<= temp_R;
 					            temp_RAM_WR <= '1';
+									
+								
 				     ELSE 
 				        temp_RAM_WR <= '0';
 				        
@@ -112,6 +114,8 @@ END PROCESS dpe;
 
 PC_LED <= regPC;
 W_LED <= W;
+TEMP_RAM_DATIN <=temp_R;
+temp_RAM_ADDR <= IR (6 downto 0);
 C_OUT <= C;
 Z_OUT <= Zout;
 
