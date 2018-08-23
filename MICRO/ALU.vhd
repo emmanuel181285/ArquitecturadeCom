@@ -29,7 +29,7 @@ BEGIN
 					R1 <= "00000000";
 				ELSIF (OP = "0001") THEN
 					R1 <= "00000000";
-	--RLA
+	--RLB
 				ELSIF (OP ="0010") THEN
 					R1(0) <= Ci;
 					R1(1) <= B(0);
@@ -40,7 +40,7 @@ BEGIN
 					R1(6) <= B(5);
 					R1(7) <= B(6);
 					Co <= B(7);
-	--RRA
+	--RRB
 				ELSIF (OP = "0011") THEN
 					Co <= B(0);
 					R1(0) <= B(1);
